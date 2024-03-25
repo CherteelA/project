@@ -141,6 +141,70 @@ void test_sortRowsByMinElement_alreadyChange(){
     freeMemMatrix(&m);
 }
 //.............................................................................................
+//tusk 3
+int getMin(int *a, int n){
+    int min = INT_MAX;
+    for(int i = 0; i < n; i++){
+        if(min > a[i])
+            min = a[i];
+    }
+    return min;
+}
+void sortColsByMinElement(matrix m){
+    selectionSortColsMatrixByColCriteria(&m, getMin);
+}
+//обычный тест
+void test_sortColsByMinElement_base(){
+    int arr[]= {54,58,57,23,
+                0,8,7,63,
+                35,45,69,2,
+                26,99,16,55};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    int expected_arr[]=    {54,23,57,58,
+                            0,63,7,8,
+                            35,2,69,45,
+                            26,55,16,99};
+    matrix expected_m = createMatrixFromArray(expected_arr, 4, 4);
+    sortColsByMinElement(m);
+    assert(areTwoMatricesEqual(&m,&expected_m));
+    freeMemMatrix(&expected_m);
+    freeMemMatrix(&m);
+}
+//уже отсортированный
+void test_sortColsByMinElement_alreadyOrder(){
+    int arr[]= {54,23,57,58,
+                0,63,7,8,
+                35,2,69,45,
+                26,55,16,99};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    int expected_arr[]=    {54,23,57,58,
+                            0,63,7,8,
+                            35,2,69,45,
+                            26,55,16,99};
+    matrix expected_m = createMatrixFromArray(expected_arr, 4, 4);
+    sortColsByMinElement(m);
+    assert(areTwoMatricesEqual(&m,&expected_m));
+    freeMemMatrix(&expected_m);
+    freeMemMatrix(&m);
+}
+//повторяются минимальные элементы
+void test_sortColsByMinElement_moreMin(){
+    int arr[]= {54,23,57,58,
+                1,63,1,1,
+                35,2,69,45,
+                26,55,16,99};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    int expected_arr[]=    {54,57,58,23,
+                            1,1,1,63,
+                            35,69,45,2,
+                            26,16,99,55};
+    matrix expected_m = createMatrixFromArray(expected_arr, 4, 4);
+    sortColsByMinElement(m);
+    assert(areTwoMatricesEqual(&m,&expected_m));
+    freeMemMatrix(&expected_m);
+    freeMemMatrix(&m);
+}
+//.............................................................
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -148,7 +212,11 @@ void test_matrix(){
     test_sortRowsByMinElement_base();//обычный случай
     test_sortRowsByMinElement_moreMax();//если max повторяется
     test_sortRowsByMinElement_alreadyChange();//если изменения не нужны
+    test_sortColsByMinElement_base();//обычный тест
+    test_sortColsByMinElement_alreadyOrder();//уже отсортированный
+    test_sortColsByMinElement_moreMin();//повторяются минимальные элементы
 }
+
 int main(){
     test_matrix();
     return 0;
