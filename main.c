@@ -1244,7 +1244,49 @@ void test_getVectorIndexWithMaxAngle_EqualeVec(){
     assert(getVectorIndexWithMaxAngle(m, vec) == 1);
     freeMemMatrix(&m);
 }
+//..........................................................................................
+//tusk 18
+long long getScalarProductRowAndCol(matrix m, int i, int j){
+    int vec1[m.nRows];
+    int vec2[m.nRows];
+    for(int k = 0; k < m.nRows; k++){
+        vec1[k] = m.values[i][k];
+    }
+    for(int k = 0; k < m.nRows; k++){
+        vec2[k] = m.values[k][j];
+    }
 
+    long long ScalarProduct = 0;
+    for(int k = 0; k < m.nCols; k++){
+        ScalarProduct+= vec2[k]*vec1[k];
+    }
+    return ScalarProduct;
+}
+long long getSpecialScalarProduct(matrix m){
+    position max = getMaxValuePos(m);
+    position min = getMinValuePos(m);
+    return getScalarProductRowAndCol(m, max.rowIndex, min.colIndex);
+}
+//обычный случай
+void test_getSpecialScalarProduct_base(){
+    int arr[]= {1,5,8,9,
+                3,10,20,6,
+                12,15,11,2,
+                13,14,16,17};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    assert(getSpecialScalarProduct(m) == 351);
+    freeMemMatrix(&m);
+}
+//минимальный элемент 0
+void test_getSpecialScalarProduct_minElZero(){
+    int arr[]= {0,5,8,9,
+                3,10,20,6,
+                12,15,11,2,
+                13,14,16,17};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    assert(getSpecialScalarProduct(m) == 348);
+    freeMemMatrix(&m);
+}
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -1296,6 +1338,8 @@ void test_matrix(){
     test_getNSpecialElement2_MinValueLeft(); //если слева стоит самое маленькое число
     test_getVectorIndexWithMaxAngle_base();//обычный случай
     test_getVectorIndexWithMaxAngle_EqualeVec();//векторы совпали
+    test_getSpecialScalarProduct_base();//обычный случай
+    test_getSpecialScalarProduct_minElZero(); //минимальный элемент 0
 }
 
 int main(){
