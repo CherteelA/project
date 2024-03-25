@@ -861,6 +861,129 @@ void test_countNonDescendingRowsMatrices_allEquale() {
     freeMemMatrices(ms, 4);
 }
 //...............................................................................................
+//tusk 14
+
+int countZeroRows(matrix m){
+    int count = 0;
+    for(int i = 0; i < m.nRows; i++){
+        bool flag = true;
+        for(int j = 0; j < m.nCols; j++){
+            if(m.values[i][j] != 0){
+                flag = false;
+            }
+        }
+        if(flag){
+            count++;
+        }
+    }
+    return count;
+}
+void chek_printMatrixWithMaxZeroRows(matrix *ms, int nMatrix, int *a, int *n){
+    int arr[nMatrix];
+    int arr_index[nMatrix];
+    for(int i = 0; i < nMatrix; i++){
+        arr[i] = countZeroRows(ms[i]);
+        arr_index[i] = i;
+    }
+    for (int i = 0; i < nMatrix; i++) {
+        for (int j = i; j < nMatrix; j++) {
+            if (arr[i] > arr[j]) {
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+                int temp_index = arr_index[i];
+                arr_index[i] = arr_index[j];
+                arr_index[j] = temp_index;
+            }
+        }
+    }
+    int ind = 0;
+    int value = arr[nMatrix-1];
+    for(int i = nMatrix - 1; i >=0; i--){
+        if(arr[i] != value){
+            break;
+        }
+        a[ind] = arr_index[i];
+        ind++;
+    }
+    *n = ind;
+}
+void printMatrixWithMaxZeroRows(matrix *ms, int nMatrix){
+    int arr[nMatrix];
+    int arr_index[nMatrix];
+    for(int i = 0; i < nMatrix; i++){
+        arr[i] = countZeroRows(ms[i]);
+        arr_index[i] = i;
+    }
+    for (int i = 0; i < nMatrix; i++) {
+        for (int j = i; j < nMatrix; j++) {
+            if (arr[i] > arr[j]) {
+                int temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+                int temp_index = arr_index[i];
+                arr_index[i] = arr_index[j];
+                arr_index[j] = temp_index;
+            }
+        }
+    }
+    int value = arr[nMatrix-1];
+    for(int i = nMatrix - 1; i >=0; i--){
+        if(arr[i] != value){
+            break;
+        }
+        //outputMatrix(ms[arr_index[i]]); вывод
+    }
+}
+//базовый тест
+void test_printMatrixWithMaxZeroRows_base() {
+    int arr[] = {0, 0, 0,
+                 0,0, 0,
+                 2, 2,0,
+                 0, 0, 0,
+                 1, 1, 2,
+                 3,4, 5,
+                 0, 0,0,
+                 9, 10, 0,
+                 0, 0, 0,
+                 30,100, 300,
+                 700, 90000, 15,
+                 0,0,0};
+    matrix *ms = createArrayOfMatrixFromArray(arr, 4, 3, 3);
+    int expriment_arr[4];
+    int n = 4;
+    int expected_arr[]= {0, 2};
+    chek_printMatrixWithMaxZeroRows(ms, 4, expriment_arr,&n);
+    for(int i = 0; i < n; i++){
+        assert(expriment_arr[i] == expected_arr[i]);
+    }
+    freeMemMatrices(ms, 4);
+}
+//все матрицы имеют одинаковое кол-во нулевых строк
+void test_printMatrixWithMaxZeroRows_zeroRowsIsEquale() {
+    int arr[] = {0, 0, 0,
+                 0,1, 0,
+                 2, 2,0,
+                 0, 0, 0,
+                 1, 1, 2,
+                 3,4, 5,
+                 0, 1,0,
+                 9, 10, 0,
+                 0, 0, 0,
+                 30,100, 300,
+                 700, 90000, 15,
+                 0,0,0};
+    matrix *ms = createArrayOfMatrixFromArray(arr, 4, 3, 3);
+    int expriment_arr[4];
+    int n = 4;
+    int expected_arr[]= {3, 2, 1, 0};
+    chek_printMatrixWithMaxZeroRows(ms, 4, expriment_arr,&n);
+    for(int i = 0; i < n; i++){
+        assert(expriment_arr[i] == expected_arr[i]);
+    }
+    freeMemMatrices(ms, 4);
+}
+//.........................................................................................................
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -901,6 +1024,8 @@ void test_matrix(){
     test_countNonDescendingRowsMatrices_base(); //обычный случай
     test_countNonDescendingRowsMatrices_4on4(); //матрицы 4 на 4
     test_countNonDescendingRowsMatrices_allEquale(); //если матрица состоит из одинаковых элементов
+    test_printMatrixWithMaxZeroRows_base(); //базовый тест
+    test_printMatrixWithMaxZeroRows_zeroRowsIsEquale(); // все матрицы имеют одинаковое кол-во нулевых строк
 }
 
 int main(){
