@@ -280,6 +280,72 @@ void test_getSquareOfMatrixIfSymmetric_single(){
     freeMemMatrix(&m);
 }
 //....................................................................
+//tusk 5
+long long getSum(const int *a, int n){
+    long long sum = 0;
+    for(int i = 0; i < n; i++){
+        sum += a[i];
+    }
+    return sum;
+}
+bool isUnique(const long long *a, int n){
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            if(a[i] == a[j] && i!=j){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+void transposeIfMatrixHasNotEqualSumOfRows(matrix m){
+    long long arr[m.nCols];
+    for(int i = 0; i < m.nCols; i++){
+        int* Row = m.values[i];
+        arr[i] = getSum(Row, m.nCols);
+    }
+    if(!isUnique(arr, m.nCols)){
+        fprintf(stderr, "sum is not unique");
+        return;
+    }
+    transposeSquareMatrix(&m);
+}
+//обычный случай
+void test_transposeIfMatrixHasNotEqualSumOfRows_base(){
+    int arr[]= {54,23,57,58,
+                1,63,1,1,
+                35,2,69,45,
+                26,55,16,99};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    int expected_arr[]=    {54,1,35,26,
+                            23,63,2,55,
+                            57,1,69,16,
+                            58,1,45,99};
+    matrix expected_m = createMatrixFromArray(expected_arr, 4, 4);
+    transposeIfMatrixHasNotEqualSumOfRows(m);
+    assert(areTwoMatricesEqual(&m,&expected_m));
+    freeMemMatrix(&expected_m);
+    freeMemMatrix(&m);
+}
+//если симетричная
+void test_transposeIfMatrixHasNotEqualSumOfRows_IfSymmetric(){
+    int arr[]= {54,1,35,26,
+                1,63,2,55,
+                35,2,69,16,
+                26,55,16,99};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    int expected_arr[]=    {54,1,35,26,
+                            1,63,2,55,
+                            35,2,69,16,
+                            26,55,16,99};
+    matrix expected_m = createMatrixFromArray(expected_arr, 4, 4);
+    transposeIfMatrixHasNotEqualSumOfRows(m);
+    assert(areTwoMatricesEqual(&m,&expected_m));
+    freeMemMatrix(&expected_m);
+    freeMemMatrix(&m);
+}
+
+//.............................................................................
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -293,6 +359,8 @@ void test_matrix(){
     test_getSquareOfMatrixIfSymmetric_base(); //обычный случай
     test_getSquareOfMatrixIfSymmetric_zero(); //если в матрице есть 0
     test_getSquareOfMatrixIfSymmetric_single(); //если матрица единичная
+    test_transposeIfMatrixHasNotEqualSumOfRows_base(); //обычный случай
+    test_transposeIfMatrixHasNotEqualSumOfRows_IfSymmetric(); // если симетричная
 }
 
 int main(){
