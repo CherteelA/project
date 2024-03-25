@@ -686,6 +686,50 @@ void test_countEqClassesByRowsSum_ALLequale(){
     freeMemMatrix(&m);
 }
 //.............................................................................................
+//tusk 11
+int getNSpecialElement(matrix m){
+    int count = 0;
+    for(int j = 0; j < m.nCols; j++){
+        int max_value = INT_MIN;
+        int sum = 0;
+        for(int i = 0; i < m.nRows; i++){
+            max_value = max_value > m.values[i][j] ? max_value : m.values[i][j];
+            sum += m.values[i][j];
+        }
+        if(max_value > sum - max_value)
+            count++;
+    }
+    return count;
+}
+
+//обычный случай
+void test_getNSpecialElement_base(){
+    int arr[]= {3,5,5,4,
+                2,3,6,7,
+                12,2,1,2};
+    matrix m = createMatrixFromArray(arr, 3, 4);
+    assert(getNSpecialElement(m) == 2);
+    freeMemMatrix(&m);
+}
+//нет особых чисел
+void test_getNSpecialElement_voidValue(){
+    int arr[]= {3,5,5,4,
+                2,3,6,5,
+                4,2,1,2};
+    matrix m = createMatrixFromArray(arr, 3, 4);
+    assert(getNSpecialElement(m) == 0);
+    freeMemMatrix(&m);
+}
+//в каждом столбце особое число
+void test_getNSpecialElement_AllCols(){
+    int arr[]= {3,5,5,4,
+                2,3,8,7,
+                12,10,1,2};
+    matrix m = createMatrixFromArray(arr, 3, 4);
+    assert(getNSpecialElement(m) == m.nCols);
+    freeMemMatrix(&m);
+}
+//.......................................................................................................
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -717,6 +761,9 @@ void test_matrix(){
     test_countEqClassesByRowsSum_INT_MAX(); //используя INT_MAX
     test_countEqClassesByRowsSum_equale(); //есть одинаковые
     test_countEqClassesByRowsSum_ALLequale(); //нет уникальных
+    test_getNSpecialElement_base(); //обычный случай
+    test_getNSpecialElement_voidValue(); //нет особых чисел
+    test_getNSpecialElement_AllCols(); //в каждом столбце особое число
 }
 
 int main(){
