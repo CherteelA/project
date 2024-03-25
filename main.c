@@ -1108,6 +1108,86 @@ void test_print_matrix_minNorm_AllMatrixsPrint(){
     freeMemMatrices(ms, 4);
 }
 //...............................................................................................
+//tusk 16
+int min2(int a, int b){
+    return a < b ? a : b;
+}
+int getNSpecialElement2(matrix m){
+    int count = 0;
+    for(int i = 0; i < m.nRows; i++){
+        for(int k = 0; k < m.nCols; k++) {
+            bool flag = true;
+            for (int j = 0; j < m.nCols; j++) {
+                if(j < k && min2(m.values[i][k], m.values[i][j]) == m.values[i][k]){
+                    flag = false;
+                    break;
+                }
+                if(j > k && min2(m.values[i][k], m.values[i][j]) == m.values[i][j]){
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag){
+                count++;
+                break;
+            }
+        }
+    }
+    return count;
+}
+
+//обычный случай
+void test_getNSpecialElement2_base(){
+    int arr[]= {1,5,8,9,
+                10,6,7,5,
+                3,7,0,2,
+                1,6,8,100};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    assert(getNSpecialElement2(m) == 2);
+    freeMemMatrix(&m);
+}
+//если особый элемент на 0 индексе
+void test_getNSpecialElement2_in0Index(){
+    int arr[]= {1,5,8,9,
+                0,6,7,5,
+                3,7,0,2,
+                1,6,8,100};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    assert(getNSpecialElement2(m) == 3);
+    freeMemMatrix(&m);
+}
+//если стоят два одинаковых числа
+void test_getNSpecialElement2_EqualeValue(){
+    int arr[]= {4,1,5,5,4,
+                0,6,7,5,0,
+                7,3,10,10,5,
+                5,1,6,100,6};
+    matrix m = createMatrixFromArray(arr, 4, 5);
+    assert(getNSpecialElement2(m) == 0);
+    freeMemMatrix(&m);
+}
+//если справа стоит самое большое число
+void test_getNSpecialElement2_MaxValueRight(){
+    int arr[]= {4,1,5,5,9,
+                0,6,7,5,0,
+                7,3,10,10,INT_MIN,
+                5,INT_MIN,6,100,INT_MAX};
+    matrix m = createMatrixFromArray(arr, 4, 5);
+    assert(getNSpecialElement2(m) == 2);
+    freeMemMatrix(&m);
+}
+//если слева стоит самое маленькое число
+void test_getNSpecialElement2_MinValueLeft(){
+    int arr[]= {4,1,5,5,9,
+                0,6,7,5,0,
+                INT_MIN,3,10,10,14,
+                5,INT_MIN,6,100,INT_MAX};
+    matrix m = createMatrixFromArray(arr, 4, 5);
+    assert(getNSpecialElement2(m) == 3);
+    freeMemMatrix(&m);
+}
+//..........................................................................................
+
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -1152,6 +1232,11 @@ void test_matrix(){
     test_printMatrixWithMaxZeroRows_zeroRowsIsEquale(); // все матрицы имеют одинаковое кол-во нулевых строк
     test_print_matrix_minNorm_base(); //базовый тест
     test_print_matrix_minNorm_AllMatrixsPrint(); //все матрицы подходят
+    test_getNSpecialElement2_base(); //обычный случай
+    test_getNSpecialElement2_in0Index(); //если особый элемент на 0 индексе
+    test_getNSpecialElement2_EqualeValue(); //если стоят два одинаковых числа
+    test_getNSpecialElement2_MaxValueRight(); //если справа стоит самое большое число
+    test_getNSpecialElement2_MinValueLeft(); //если слева стоит самое маленькое число
 }
 
 int main(){
