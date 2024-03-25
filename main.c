@@ -452,6 +452,71 @@ void test_findSumOfMaxesOfPseudoDiagonal_matrix_2on2(){
     freeMemMatrix(&m);
 }
 //..............................................................................................
+//tusk 8
+int getMinInArea(matrix m){
+    position max_el = getMaxValuePos(m);
+    int min = m.values[max_el.rowIndex][max_el.colIndex];
+    if(max_el.rowIndex!=0){
+        for(int i = 1; i <= max_el.rowIndex; i++) {
+            for(int j = max_el.colIndex - i; j <= max_el.colIndex+i; j++){
+                if(j == m.nCols){
+                    break;
+                }
+                if(j >= 0) {
+                    min = min > m.values[max_el.rowIndex - i][j] ? m.values[max_el.rowIndex - i][j] : min;
+                }
+            }
+        }
+    }
+    return min;
+}
+
+//обычный случай
+void test_getMinInArea_base(){
+    int arr[]= {1,2,3,4,
+                5,6,7,8,
+                9,10,11,12,
+                13,14,16,15};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+
+    assert(getMinInArea(m) == 1);
+    freeMemMatrix(&m);
+}
+//максимальное значение у края
+void test_getMinInArea_atBorder(){
+    int arr[]= {0,2,3,4,
+                5,6,7,8,
+                9,10,11,12,
+                16,14,13,15};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+
+    assert(getMinInArea(m) == 0);
+    freeMemMatrix(&m);
+}
+//максимальное значение в первой строке
+void test_getMinInArea_inFirstRow(){
+    int arr[]= {16,2,3,4,
+                5,6,7,8,
+                9,10,11,12,
+                0,14,13,15};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+
+    assert(getMinInArea(m) == 16);
+    freeMemMatrix(&m);
+}
+
+//максимальное значение у правого края во второй строке
+void test_getMinInArea_inSecondRow(){
+    int arr[]= {8,2,3,4,
+                5,6,7,16,
+                9,10,11,12,
+                0,14,13,15};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+
+    assert(getMinInArea(m) == 3);
+    freeMemMatrix(&m);
+}
+//.........................................................................................
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -472,6 +537,10 @@ void test_matrix(){
     test_findSumOfMaxesOfPseudoDiagonal_base(); //обычный случай
     test_findSumOfMaxesOfPseudoDiagonal_SquareMatrix(); //если матрица квадратная
     test_findSumOfMaxesOfPseudoDiagonal_matrix_2on2(); //матрица 2*2
+    test_getMinInArea_base(); //обычный случай
+    test_getMinInArea_atBorder();//максимальное значение у края
+    test_getMinInArea_inFirstRow();//максимальное значение в первой строке
+    test_getMinInArea_inSecondRow(); //максимальное значение у правого края во второй строке
 }
 
 int main(){
