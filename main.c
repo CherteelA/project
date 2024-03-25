@@ -205,6 +205,81 @@ void test_sortColsByMinElement_moreMin(){
     freeMemMatrix(&m);
 }
 //.............................................................
+//tusk 4
+
+matrix mulMatrices(matrix m1, matrix m2){
+    matrix result = getMemMatrix(m1.nRows, m1.nCols);
+    for (int i = 0; i < result.nRows; i++) {
+        for (int j = 0; j < result.nCols; j++) {
+            result.values[i][j] = 0;
+            for (int k = 0; k < m1.nCols; k++) {
+                result.values[i][j] += m1.values[i][k] * m2.values[k][j];
+            }
+        }
+    }
+    return result;
+}
+void getSquareOfMatrixIfSymmetric(matrix *m){
+    if(!isSymmetricMatrix(m)) {
+        fprintf(stderr, "matrix is not symmetric");
+        return;
+    }
+    matrix temp_matrix = getMemMatrix(m->nRows, m->nCols);
+    copyMatrix(m, &temp_matrix);
+    freeMemMatrix(m);
+    *m = mulMatrices(temp_matrix, temp_matrix);
+    freeMemMatrix(&temp_matrix);
+}
+//обычный случай
+void test_getSquareOfMatrixIfSymmetric_base(){
+    int arr[]= {2,1,6,7,
+                1,1,8,10,
+                6,8,3,5,
+                7,10,5,4};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    int expected_arr[]=   {90,121,73,82,
+                           121,166,88,97,
+                           73,88,134,157,
+                           82,97,157,190};
+    matrix expected_m = createMatrixFromArray(expected_arr, 4, 4);
+    getSquareOfMatrixIfSymmetric(&m);
+    assert(areTwoMatricesEqual(&m,&expected_m));
+    freeMemMatrix(&expected_m);
+    freeMemMatrix(&m);
+}
+//если в матрице есть 0
+void test_getSquareOfMatrixIfSymmetric_zero(){
+    int arr[]= {2,1,6,0,
+                1,1,8,10,
+                6,8,3,5,
+                0,10,5,4};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    int expected_arr[]=    {41,51,38,40,
+                            51,166,88,90,
+                            38,88,134,115,
+                            40,90,115,141};
+    matrix expected_m = createMatrixFromArray(expected_arr, 4, 4);
+    getSquareOfMatrixIfSymmetric(&m);
+    assert(areTwoMatricesEqual(&m,&expected_m));
+    freeMemMatrix(&expected_m);
+    freeMemMatrix(&m);
+}
+//если матрица единичная
+void test_getSquareOfMatrixIfSymmetric_single(){
+    int arr[] = {1,0,0,
+                 0,1,0,
+                 0,0,1};
+    matrix m = createMatrixFromArray(arr, 3, 3);
+    int expected_arr[]=    {1,0,0,
+                            0,1,0,
+                            0,0,1};
+    matrix expected_m = createMatrixFromArray(expected_arr, 3, 3);
+    getSquareOfMatrixIfSymmetric(&m);
+    assert(areTwoMatricesEqual(&m,&expected_m));
+    freeMemMatrix(&expected_m);
+    freeMemMatrix(&m);
+}
+//....................................................................
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -215,6 +290,9 @@ void test_matrix(){
     test_sortColsByMinElement_base();//обычный тест
     test_sortColsByMinElement_alreadyOrder();//уже отсортированный
     test_sortColsByMinElement_moreMin();//повторяются минимальные элементы
+    test_getSquareOfMatrixIfSymmetric_base(); //обычный случай
+    test_getSquareOfMatrixIfSymmetric_zero(); //если в матрице есть 0
+    test_getSquareOfMatrixIfSymmetric_single(); //если матрица единичная
 }
 
 int main(){
