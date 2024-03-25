@@ -396,7 +396,62 @@ void test_isMutuallyInverseMatrices_alreadySingl(){
     freeMemMatrix(&m2);
 }
 //.................................................................................
+//tusk 7
+int max(int a, int b){
+    return a > b ? a : b;
+}
 
+long long findSumOfMaxesOfPseudoDiagonal(matrix m){
+    int arr[m.nCols+m.nRows-1];
+    for (int i = 0; i < m.nCols+m.nRows-1; i++){
+        arr[i] = INT_MIN;
+    }
+    int index = 0;
+    for (int k = 1 - m.nRows; k < m.nCols; k++){
+        for (int i = 0; i < m.nRows; i++){
+            int j = k + i;
+            if (j >= 0 && j < m.nCols){
+                arr[index] = max(arr[index], m.values[i][j]);
+            }
+        }
+        index++;
+    }
+    int sum = 0;
+    for (int i = 0; i < m.nCols+m.nRows-1; i++){
+        sum+=arr[i];
+    }
+    return sum;
+}
+//обычный случай
+void test_findSumOfMaxesOfPseudoDiagonal_base(){
+    int arr[]= {2, 5, 7, 8,
+                6, 3, 4, -9,
+                5, -2, -3, 3};
+    matrix m= createMatrixFromArray(arr, 3, 4);
+    findSumOfMaxesOfPseudoDiagonal(m);
+    assert(findSumOfMaxesOfPseudoDiagonal(m)==34);
+    freeMemMatrix(&m);
+}
+//если матрица квадратная
+void test_findSumOfMaxesOfPseudoDiagonal_SquareMatrix(){
+    int arr[]= {2, 5, 7,
+                6, 3, 4,
+                5, -2, -3};
+    matrix m= createMatrixFromArray(arr, 3, 3);
+    findSumOfMaxesOfPseudoDiagonal(m);
+    assert(findSumOfMaxesOfPseudoDiagonal(m)==26);
+    freeMemMatrix(&m);
+}
+//матрица 2*2
+void test_findSumOfMaxesOfPseudoDiagonal_matrix_2on2(){
+    int arr[]= {2, 5,
+                6, 3};
+    matrix m= createMatrixFromArray(arr, 2, 2);
+    findSumOfMaxesOfPseudoDiagonal(m);
+    assert(findSumOfMaxesOfPseudoDiagonal(m)==14);
+    freeMemMatrix(&m);
+}
+//..............................................................................................
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -414,6 +469,9 @@ void test_matrix(){
     test_transposeIfMatrixHasNotEqualSumOfRows_IfSymmetric(); // если симетричная
     test_isMutuallyInverseMatrices_base(); //обычный случай
     test_isMutuallyInverseMatrices_alreadySingl(); //уже еденичная матрица
+    test_findSumOfMaxesOfPseudoDiagonal_base(); //обычный случай
+    test_findSumOfMaxesOfPseudoDiagonal_SquareMatrix(); //если матрица квадратная
+    test_findSumOfMaxesOfPseudoDiagonal_matrix_2on2(); //матрица 2*2
 }
 
 int main(){
