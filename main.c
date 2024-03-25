@@ -730,6 +730,72 @@ void test_getNSpecialElement_AllCols(){
     freeMemMatrix(&m);
 }
 //.......................................................................................................
+//tusk 12
+position getLeftMin(matrix m){
+    return getMinValuePos(m);
+}
+void swapPenultimateRow(matrix m){
+    position min = getLeftMin(m);
+    int crossing = m.values[m.nRows-2][min.colIndex];
+    for(int i = 0; i < m.nCols; i++){
+        m.values[m.nRows-2][i] = m.values[i][min.colIndex];
+        if(i == m.nRows-2)
+            m.values[m.nRows-2][i] = crossing;
+    }
+
+}
+//обычный случай
+void test_swapPenultimateRow_base(){
+    int arr[]= {1,5,1,10,
+                2,6,1,0,
+                3,7,3,4,
+                4,8,3,1};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    int expected_a[]= {1,5,1,10,
+                       2,6,1,0,
+                       10,0,4,1,
+                       4,8,3,1};
+    matrix expected_m = createMatrixFromArray(expected_a, 4, 4);
+    swapPenultimateRow(m);
+    assert(areTwoMatricesEqual(&expected_m, &m));
+    freeMemMatrix(&expected_m);
+    freeMemMatrix(&m);
+}
+//если есть максимальное значение int
+void test_swapPenultimateRow_MaxInt(){
+    int arr[]= {10,5,1,1,
+                0,6,1,2,
+                INT_MAX,7,3,3,
+                1,8,3,INT_MAX};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    int expected_a[]= {10,5,1,1,
+                       0,6,1,2,
+                       10,0,INT_MAX,1,
+                       1,8,3,INT_MAX};
+    matrix expected_m = createMatrixFromArray(expected_a, 4, 4);
+    swapPenultimateRow(m);
+    assert(areTwoMatricesEqual(&expected_m, &m));
+    freeMemMatrix(&expected_m);
+    freeMemMatrix(&m);
+}
+//если min в первой колонке
+void test_swapPenultimateRow_MinInFirst(){
+    int arr[]= {10,5,1,1,
+                0,6,1,2,
+                3,7,3,3,
+                1,8,3,3};
+    matrix m = createMatrixFromArray(arr, 4, 4);
+    int expected_a[]= {10,5,1,1,
+                       0,6,1,2,
+                       10,0,3,1,
+                       1,8,3,3};
+    matrix expected_m = createMatrixFromArray(expected_a, 4, 4);
+    swapPenultimateRow(m);
+    assert(areTwoMatricesEqual(&expected_m, &m));
+    freeMemMatrix(&expected_m);
+    freeMemMatrix(&m);
+}
+//..........................................................................................
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -764,6 +830,9 @@ void test_matrix(){
     test_getNSpecialElement_base(); //обычный случай
     test_getNSpecialElement_voidValue(); //нет особых чисел
     test_getNSpecialElement_AllCols(); //в каждом столбце особое число
+    test_swapPenultimateRow_base(); //обычный случай
+    test_swapPenultimateRow_MaxInt(); //если есть максимальное значение int
+    test_swapPenultimateRow_MinInFirst(); //если min в первой колонке
 }
 
 int main(){
