@@ -796,6 +796,71 @@ void test_swapPenultimateRow_MinInFirst(){
     freeMemMatrix(&m);
 }
 //..........................................................................................
+// tusk 13
+bool isNonDescendingSorted(int *a, int n){
+    for(int i = 0; i < n - 1; i++){
+        if(a[i] > a[i+1])
+            return false;
+    }
+    return true;
+}
+bool hasAllNonDescendingRows(matrix m){
+    for(int i = 0; i < m.nRows; i++){
+        if(!isNonDescendingSorted(m.values[i], m.nCols)){
+            return false;
+        }
+    }
+    return true;
+}
+int countNonDescendingRowsMatrices(matrix *ms, int nMatrix){
+    int count = 0;
+    for(int i = 0; i < nMatrix; i++){
+        if(hasAllNonDescendingRows(ms[i])){
+            count++;
+        }
+    }
+    return count;
+}
+
+//обычный случай
+void test_countNonDescendingRowsMatrices_base() {
+    int arr[] = {7, 1, 1, 1,
+                 1, 6, 2, 2,
+                 5, 4, 2, 3,
+                 1, 3, 7, 9};
+
+    matrix *ms = createArrayOfMatrixFromArray(arr, 4, 2, 2);
+    assert(countNonDescendingRowsMatrices(ms, 4) == 2);
+    freeMemMatrices(ms, 4);
+}
+
+//матрицы 4 на 4
+void test_countNonDescendingRowsMatrices_4on4(){
+    int arr[] = {7, 1, 1, 1,
+                 1, 6, 2, 2,
+                 1, 1, 1, 1,
+                 1, 1, 2, 3,
+                 4, 5, 6, 7,
+                 8, 9, 10, 11,
+                 12, 13, 20, 30,
+                 100, 300, 700, 90000};
+
+    matrix *ms = createArrayOfMatrixFromArray(arr, 2, 4, 4);
+    assert(countNonDescendingRowsMatrices(ms, 2) == 1);
+    freeMemMatrices(ms, 2);
+}
+//если матрица состоит из одинаковых элементов
+void test_countNonDescendingRowsMatrices_allEquale() {
+    int arr[] = {1, 1, 1, 1,
+                 5, 5, 5, 5,
+                 3, 3, 3, 3,
+                 7, 7, 7, 2};
+
+    matrix *ms = createArrayOfMatrixFromArray(arr, 4, 2, 2);
+    assert(countNonDescendingRowsMatrices(ms, 4) == 3);
+    freeMemMatrices(ms, 4);
+}
+//...............................................................................................
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -833,6 +898,9 @@ void test_matrix(){
     test_swapPenultimateRow_base(); //обычный случай
     test_swapPenultimateRow_MaxInt(); //если есть максимальное значение int
     test_swapPenultimateRow_MinInFirst(); //если min в первой колонке
+    test_countNonDescendingRowsMatrices_base(); //обычный случай
+    test_countNonDescendingRowsMatrices_4on4(); //матрицы 4 на 4
+    test_countNonDescendingRowsMatrices_allEquale(); //если матрица состоит из одинаковых элементов
 }
 
 int main(){
