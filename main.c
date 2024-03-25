@@ -346,6 +346,57 @@ void test_transposeIfMatrixHasNotEqualSumOfRows_IfSymmetric(){
 }
 
 //.............................................................................
+//tusk 6
+bool isMutuallyInverseMatrices(matrix m1, matrix m2){
+    matrix result;
+    result = getMemMatrix(m1.nRows, m2.nCols);
+    for (int i = 0; i < result.nRows; i++) {
+        for (int j = 0; j < result.nCols; j++) {
+            result.values[i][j] = 0;
+            for (int k = 0; k < m1.nCols; k++) {
+                result.values[i][j] += m1.values[i][k] * m2.values[k][j];
+            }
+        }
+    }
+    if(isEMatrix(&result)){
+        freeMemMatrix(&result);
+        return true;
+    }
+    freeMemMatrix(&result);
+    return false;
+}
+
+//обычный случай
+void test_isMutuallyInverseMatrices_base(){
+    int arr1[]= {2, 5, 7,
+                 6, 3, 4,
+                 5, -2, -3};
+    matrix m1= createMatrixFromArray(arr1, 3, 3);
+    int arr2[]=    {1, -1, 1,
+                    -38, 41, -34,
+                    27, -29, 24};
+    matrix m2 = createMatrixFromArray(arr2, 3, 3);
+
+    assert(isMutuallyInverseMatrices(m1, m2));
+    freeMemMatrix(&m1);
+    freeMemMatrix(&m2);
+}
+//уже еденичная матрица
+void test_isMutuallyInverseMatrices_alreadySingl(){
+    int arr1[]= {1, 0, 0,
+                 0, 1, 0,
+                 0, 0, 1};
+    matrix m1= createMatrixFromArray(arr1, 3, 3);
+    int arr2[]=    {1, 0, 0,
+                    0, 1, 0,
+                    0, 0, 1};
+    matrix m2 = createMatrixFromArray(arr2, 3, 3);
+    assert(isMutuallyInverseMatrices(m1, m2));
+    freeMemMatrix(&m1);
+    freeMemMatrix(&m2);
+}
+//.................................................................................
+
 void test_matrix(){
     test_change_min_max_base();//обычный случай
     test_change_min_max_oneRow();//в одной строке
@@ -361,6 +412,8 @@ void test_matrix(){
     test_getSquareOfMatrixIfSymmetric_single(); //если матрица единичная
     test_transposeIfMatrixHasNotEqualSumOfRows_base(); //обычный случай
     test_transposeIfMatrixHasNotEqualSumOfRows_IfSymmetric(); // если симетричная
+    test_isMutuallyInverseMatrices_base(); //обычный случай
+    test_isMutuallyInverseMatrices_alreadySingl(); //уже еденичная матрица
 }
 
 int main(){
