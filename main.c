@@ -1187,6 +1187,63 @@ void test_getNSpecialElement2_MinValueLeft(){
     freeMemMatrix(&m);
 }
 //..........................................................................................
+//tusk 17
+double getScalarProduct(int *a, int *b, int n){
+    double ScalarProduct = 0;
+    for(int i = 0; i < n; i++){
+        ScalarProduct+= a[i]*b[i];
+    }
+    return ScalarProduct;
+}
+double getVectorLength(int *a, int n){
+    double VectorLength = 0;
+    for(int i = 0; i < n; i++){
+        VectorLength += pow(a[i], 2);
+    }
+    return sqrt(VectorLength);
+}
+double getCosine(int *a, int *b, int n){
+    double cos = getScalarProduct(a,b,n)/(getVectorLength(a,n)*getVectorLength(b,n));
+    return cos;
+}
+int getVectorIndexWithMaxAngle(matrix m, int *b){
+    double arr[m.nRows];
+    for(int i = 0; i < m.nRows; i++){
+        arr[i] = acos(getCosine(m.values[i], b, m.nCols));
+    }
+    double max = arr[0];
+    int indx = 0;
+    for(int i = 1; i < m.nRows; i++){
+        if(max < arr[i]){
+            max = arr[i];
+            indx = i;
+        }
+    }
+    return indx;
+}
+
+//обычный случай
+void test_getVectorIndexWithMaxAngle_base(){
+    int arr[]= {1,2,0,
+                0,3,4,
+                1,2,4,
+                5,1,2};
+    matrix m = createMatrixFromArray(arr, 4, 3);
+    int vec[] = {3,3,3};
+    assert(getVectorIndexWithMaxAngle(m, vec) == 0);
+    freeMemMatrix(&m);
+}
+//векторы совпали
+void test_getVectorIndexWithMaxAngle_EqualeVec(){
+    int arr[]= {0,3,4,
+                1,2,0,
+                1,2,4,
+                3,3,3};
+    matrix m = createMatrixFromArray(arr, 4, 3);
+    int vec[] = {3,3,3};
+    assert(getVectorIndexWithMaxAngle(m, vec) == 1);
+    freeMemMatrix(&m);
+}
 
 void test_matrix(){
     test_change_min_max_base();//обычный случай
@@ -1237,6 +1294,8 @@ void test_matrix(){
     test_getNSpecialElement2_EqualeValue(); //если стоят два одинаковых числа
     test_getNSpecialElement2_MaxValueRight(); //если справа стоит самое большое число
     test_getNSpecialElement2_MinValueLeft(); //если слева стоит самое маленькое число
+    test_getVectorIndexWithMaxAngle_base();//обычный случай
+    test_getVectorIndexWithMaxAngle_EqualeVec();//векторы совпали
 }
 
 int main(){
